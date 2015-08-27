@@ -1,10 +1,12 @@
 package com.randywu.fancyfactory;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,6 +16,8 @@ import com.linkedin.platform.APIHelper;
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
                     PlaceholderFragment.OnFragmentInteractionListener {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -95,6 +99,7 @@ public class MainActivity extends ActionBarActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -104,6 +109,12 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onFragmentInteraction(String id) {
+        Log.d(TAG, "onFragmentInteraction="+id);
+        if ("SetDefaultTheme".equals(id)) {
+            setTheme(R.style.AppTheme);
+        } else if ("SetOtherActionBarColor".equals(id)) {
 
+        } else if ("SpinMenuItem".equals(id)) {
+        }
     }
 }

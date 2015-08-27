@@ -5,7 +5,9 @@ import android.animation.ObjectAnimator;
 import android.animation.StateListAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +33,8 @@ import com.randywu.fancyfactory.dummy.DummyContent;
  * interface.
  */
 public class ItemFragment extends PlaceholderFragment
-        implements AbsListView.OnItemClickListener {
+        implements  AbsListView.OnItemClickListener,
+                    AbsListView.OnItemLongClickListener {
 
     private static final String TAG = ItemFragment.class.getSimpleName();
 
@@ -107,6 +110,7 @@ public class ItemFragment extends PlaceholderFragment
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+        mListView.setOnItemLongClickListener(this);
         mListView.setOnScrollListener(mOnScrollListener);
 
         return view;
@@ -159,6 +163,26 @@ public class ItemFragment extends PlaceholderFragment
         }
     }
 
+    private boolean themeChanged = false;
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(TAG, "onItemLongClick position="+position);
+
+        if (themeChanged) {
+            if (null != mListener) {
+                // suck
+                ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("white"));
+                mActionBar.setBackgroundDrawable(colorDrawable);
+                themeChanged = false;
+            }
+        } else {
+            ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#ffFEBB31"));
+            mActionBar.setBackgroundDrawable(colorDrawable);
+            themeChanged = true;
+        }
+        return false;
+    }
+
     /**
      * The default content for this Fragment has a TextView that is shown when
      * the list is empty. If you would like to change the text, call this method
@@ -204,5 +228,4 @@ public class ItemFragment extends PlaceholderFragment
             mLastFirstVisibleItem = firstVisibleItem;
         }
     };
-
 }

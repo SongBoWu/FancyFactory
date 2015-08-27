@@ -3,26 +3,21 @@ package com.randywu.fancyfactory;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.plus.PlusOneButton;
-
 
 /**
- * A fragment with a Google +1 button.
+ * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PlusOneFragment.OnFragmentInteractionListener} interface
+ * {@link PullDownRefreshFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PlusOneFragment#newInstance} factory method to
+ * Use the {@link PullDownRefreshFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlusOneFragment extends PlaceholderFragment
-        implements SwipeRefreshLayout.OnRefreshListener {
-
+public class PullDownRefreshFragment extends PlaceholderFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -32,15 +27,6 @@ public class PlusOneFragment extends PlaceholderFragment
     private String mParam1;
     private String mParam2;
 
-    // The URL to +1.  Must be a valid URL.
-    private final String PLUS_ONE_URL = "http://developer.android.com";
-
-    // The request code must be 0 or greater.
-    private static final int PLUS_ONE_REQUEST_CODE = 0;
-
-    private SwipeRefreshLayout mSwipRefreshContainer;
-    private PlusOneButton mPlusOneButton;
-
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -49,11 +35,11 @@ public class PlusOneFragment extends PlaceholderFragment
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment PlusOneFragment.
+     * @return A new instance of fragment PullDownRefreshFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PlusOneFragment newInstance(String param1, String param2) {
-        PlusOneFragment fragment = new PlusOneFragment();
+    public static PullDownRefreshFragment newInstance(String param1, String param2) {
+        PullDownRefreshFragment fragment = new PullDownRefreshFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,7 +47,7 @@ public class PlusOneFragment extends PlaceholderFragment
         return fragment;
     }
 
-    public PlusOneFragment() {
+    public PullDownRefreshFragment() {
         // Required empty public constructor
     }
 
@@ -78,39 +64,7 @@ public class PlusOneFragment extends PlaceholderFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_plus_one, container, false);
-
-        mSwipRefreshContainer = (SwipeRefreshLayout) view.findViewById(R.id.swip_container);
-        mSwipRefreshContainer.setOnRefreshListener(this);
-        mSwipRefreshContainer.setColorSchemeColors(
-                getResources().getColor(android.R.color.holo_blue_bright),
-                getResources().getColor(android.R.color.holo_green_light),
-                getResources().getColor(android.R.color.holo_orange_light),
-                getResources().getColor(android.R.color.holo_red_light) );
-
-        //Find the +1 button
-        mPlusOneButton = (PlusOneButton) view.findViewById(R.id.plus_one_button);
-
-        return view;
-    }
-
-
-    @Override
-    public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
-                mSwipRefreshContainer.setRefreshing(false);
-            }
-        }, 5000);
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Refresh the state of the +1 button each time the activity receives focus.
-        mPlusOneButton.initialize(PLUS_ONE_URL, PLUS_ONE_REQUEST_CODE);
+        return inflater.inflate(R.layout.fragment_pull_down_refresh, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -124,7 +78,7 @@ public class PlusOneFragment extends PlaceholderFragment
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (PlaceholderFragment.OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
