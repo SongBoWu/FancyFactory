@@ -1,52 +1,20 @@
 package com.randywu.fancyfactory;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link SettingFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link SettingFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SettingFragment extends PreferenceFragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingFragment newInstance(String param1, String param2) {
-        SettingFragment fragment = new SettingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private static final String TAG = SettingFragment.class.getSimpleName();
 
     public SettingFragment() {
         // Required empty public constructor
@@ -56,34 +24,82 @@ public class SettingFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        setupSimplePreferencesScreen();
+    }
+
+    /**
+     * Shows the simplified settings UI if the device configuration if the
+     * device configuration dictates that a simplified, single-pane UI should be
+     * shown.
+     */
+    private void setupSimplePreferencesScreen() {
+        // Add 'general' preferences.
+        addPreferencesFromResource(R.xml.pref_general);
+
+        // Add 'notifications' preferences, and a corresponding header.
+        PreferenceCategory fakeHeader = new PreferenceCategory(this.getActivity());
+        fakeHeader.setTitle(R.string.pref_header_notifications);
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_notification);
+
+        // Add 'data and sync' preferences, and a corresponding header.
+        fakeHeader = new PreferenceCategory(this.getActivity());
+        fakeHeader.setTitle(R.string.pref_header_data_sync);
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_data_sync);
+        ListPreference listPreference = (ListPreference) findPreference("sync_frequency");
+        listPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Log.d(TAG, "[onPreferenceClick] " + preference.getKey() + " click");
+                return true;
+            }
+        });
+        listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.d(TAG, "[onPreferenceChange]" + preference.getKey() + " " + newValue.toString());
+                return true;
+            }
+        });
+
+
+        PreferenceCategory newHeader = new PreferenceCategory(getActivity());
+        newHeader.setTitle("Switch");
+        getPreferenceScreen().addPreference(newHeader);
+        SwitchPreference switchPreference = new SwitchPreference(getActivity());
+        switchPreference.setKey("KEY_SWITCH");
+        switchPreference.setTitle("switch button");
+        switchPreference.setSummary("switch button summary");
+        switchPreference.setDefaultValue(true);
+        switchPreference.setSelectable(true);
+        switchPreference.setEnabled(true);
+        switchPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Log.d(TAG, "[onPreferenceClick] " + preference.getKey() + " click");
+                return true;
+            }
+        });
+        switchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.d(TAG, "[onPreferenceChange]" + preference.getKey() + " " + newValue.toString());
+                return true;
+            }
+        });
+        getPreferenceScreen().addPreference(switchPreference);
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false);
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
 }
