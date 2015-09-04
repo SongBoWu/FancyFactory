@@ -5,6 +5,8 @@
     <string name="title_section1">Floating Action Button &amp; Hidden ActioinBar</string>
     <string name="title_section2">SwipeRefreshLayout</string>
     <string name="title_section3">Customized Video</string>
+    <string name="title_section4">SurfaceView</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>

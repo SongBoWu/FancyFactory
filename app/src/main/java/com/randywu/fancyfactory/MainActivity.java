@@ -1,8 +1,14 @@
 package com.randywu.fancyfactory;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -20,9 +26,16 @@ import com.linkedin.platform.APIHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
-                    PlaceholderFragment.OnFragmentInteractionListener {
+                    PlaceholderFragment.OnFragmentInteractionListener,
+                    ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d(TAG, "onRequestPermissionsResult requestCode="+requestCode);
+    }
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -50,6 +63,30 @@ public class MainActivity extends AppCompatActivity
 
         APIHelper helper = APIHelper.getInstance(this);
 
+
+        // Test
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "permission not grant !!!");
+
+            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+
+                new AlertDialog.Builder(this).setTitle("test").setMessage("request permission").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.CAMERA}, 123);
+                    }
+                })
+                        .setCancelable(false)
+                        .create().show();
+
+            } else {
+                Log.d(TAG, "shouldn't ShowRequestPermissionRationale!!!");
+
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, 123);
+            }
+        } else {
+            Log.d(TAG, "permission grant");
+        }
     }
 
     @Override
@@ -75,6 +112,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
+                break;
+            case 4:
+                mTitle = getString(R.string.title_section4);
                 break;
         }
     }

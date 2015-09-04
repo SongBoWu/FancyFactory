@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="test1">
+        <enum name="One" value="1" />
+        <enum name="Two" value="2" />
+        <enum name="Three" value="3" />
+    </attr>
+
+    <!--<attr name="generation" format="boolean" />-->
+
+    <declare-styleable name="CustomizeView">
+        <attr name="test1"/>
+        <attr name="happy" format="boolean" />
+    </declare-styleable>
+
+</resources>

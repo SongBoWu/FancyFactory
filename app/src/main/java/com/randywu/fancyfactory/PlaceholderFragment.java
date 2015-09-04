@@ -45,6 +45,8 @@ public class PlaceholderFragment extends Fragment {
                 fragment = new ItemFragment();
             } else if (sectionNumber == 2) {
                 fragment = new PlusOneFragment();
+            } else if (sectionNumber == 4){
+                fragment = new SurfaceFragment();
             } else {
                 fragment = new PlaceholderFragment();
             }
@@ -86,6 +88,7 @@ public class PlaceholderFragment extends Fragment {
 
     @Override
     public void onAttach(Activity activity) {
+        Log.d(TAG, "onAttach");
         super.onAttach(activity);
         ((MainActivity) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
@@ -101,6 +104,7 @@ public class PlaceholderFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.d(TAG, "onDetach");
         super.onDetach();
         mListener = null;
     }

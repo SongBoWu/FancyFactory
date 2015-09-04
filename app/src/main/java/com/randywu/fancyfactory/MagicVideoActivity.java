@@ -4,6 +4,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.annotation.WorkerThread;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +14,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 
+import com.randywu.fancyfactory.view.BallSurfaceView;
+import com.randywu.fancyfactory.view.CustomizeView;
+
 import java.io.File;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class MagicVideoActivity extends AppCompatActivity
@@ -26,6 +32,7 @@ public class MagicVideoActivity extends AppCompatActivity
 
     private static final String TAG = MagicVideoActivity.class.getSimpleName();
 
+    private static final String videoDCIMPath = "/100MEDIA/VIDEO0001.mp4";
     private MediaPlayer mMediaPlayer = null;
     private String mSourcePath = null;
 
@@ -39,15 +46,27 @@ public class MagicVideoActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+
         super.onCreate(savedInstanceState);
 
+        hideActionStatusBar();
+
         setContentView(R.layout.activity_magic_video);
+
+
+//        CustomizeView cView = (CustomizeView) findViewById(R.id.customize_view);
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceview);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceHolder.addCallback(this);
 
+    }
 
+    private void hideActionStatusBar() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        getSupportActionBar().hide();
     }
 
     @Override
@@ -57,6 +76,7 @@ public class MagicVideoActivity extends AppCompatActivity
     }
 
     private void init() {
+        mInitialDone = true;
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnPreparedListener(this);
@@ -65,9 +85,23 @@ public class MagicVideoActivity extends AppCompatActivity
         if (TextUtils.isEmpty(mSourcePath)) {
             mSourcePath = getDataSourcePath();
         }
+
+        play();
+
     }
 
     private void play() {
+        Log.d(TAG, "play");
+
+        if (!mInitialDone) {
+            Log.w(TAG, "Not initial done");
+            return;
+        } else if (!mSurfaceCreated) {
+            Log.w(TAG, "surface not created");
+            return;
+        }
+
+
         try {
             mMediaPlayer.setDataSource(mSourcePath);
         } catch(Exception e) {
@@ -80,7 +114,7 @@ public class MagicVideoActivity extends AppCompatActivity
 
     private static String getDataSourcePath() {
         String videoPath = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DCIM).getAbsolutePath()+"/100MEDIA/VIDEO0001.mp4";
+                Environment.DIRECTORY_DCIM).getAbsolutePath() + videoDCIMPath;
         Log.d(TAG, "videoPath="+videoPath);
 
         File videoFile = new File(videoPath);
@@ -126,6 +160,7 @@ public class MagicVideoActivity extends AppCompatActivity
     public void onPrepared(MediaPlayer mp) {
         Log.d(TAG, "onPrepared");
 
+        mMediaPlayer.start();
     }
 
     @Override
@@ -139,8 +174,11 @@ public class MagicVideoActivity extends AppCompatActivity
         super.onPause();
         Log.d(TAG, "onPause");
 
-        mMediaPlayer.pause();
-        mMediaPlayer.stop();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.pause();
+            mMediaPlayer.stop();
+        }
+        mInitialDone = false;
     }
 
     @Override
@@ -157,6 +195,7 @@ public class MagicVideoActivity extends AppCompatActivity
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.d(TAG, "surfaceCreated");
+        mSurfaceCreated = true;
         mMediaPlayer.setDisplay(mSurfaceHolder);
         play();
     }
@@ -170,6 +209,6 @@ public class MagicVideoActivity extends AppCompatActivity
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         Log.d(TAG, "surfaceDestroyed");
-
+        mSurfaceCreated = false;
     }
 }
